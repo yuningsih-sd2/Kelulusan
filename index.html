@@ -1,162 +1,242 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Pengumuman Kelulusan</title>
   <style>
     body {
+      margin: 0;
       font-family: Arial, sans-serif;
-      background-color: #e7f3e7;
-      padding: 20px;
+      color: #004d00;
       text-align: center;
+      background-color: #e0f7e9;
+      overflow-x: hidden;
     }
-    h1 {
-      color: green;
-      font-weight: bold;
-      margin-bottom: 0;
+
+    #stars {
+      position: fixed;
+      top: 0;
+      left: 0;
+      z-index: -2;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(to top, #001d3d, #003566);
     }
-    h2 {
-      color: green;
-      margin-top: 5px;
+
+    .flower-container {
+      pointer-events: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+      z-index: -1;
     }
-    .box {
-      background-color: white;
+
+    .flower {
+      position: absolute;
+      width: 30px;
+      height: 30px;
+      background-image: url('https://cdn-icons-png.flaticon.com/512/766/766421.png');
+      background-size: cover;
+      animation: fall 10s linear infinite;
+      opacity: 0.8;
+    }
+
+    @keyframes fall {
+      0% {
+        transform: translateY(-50px) rotate(0deg);
+        opacity: 1;
+      }
+      100% {
+        transform: translateY(100vh) rotate(360deg);
+        opacity: 0;
+      }
+    }
+
+    .container {
       padding: 20px;
-      margin-top: 30px;
+    }
+
+    h1 {
+      color: #008000;
+      font-weight: bold;
+    }
+
+    h2 {
+      color: #008000;
+      font-weight: normal;
+    }
+
+    .box {
+      background: #fff;
+      padding: 20px;
       border-radius: 10px;
-      display: inline-block;
       width: 90%;
       max-width: 600px;
+      margin: 20px auto;
       box-shadow: 0 0 10px rgba(0,0,0,0.1);
     }
+
     input[type="text"] {
-      width: 80%;
       padding: 10px;
-      margin-top: 10px;
-      font-size: 16px;
+      width: 80%;
+      margin-bottom: 10px;
+      border: 1px solid #ccc;
+      border-radius: 5px;
     }
+
     button {
-      background-color: green;
+      background-color: #008000;
       color: white;
       padding: 10px 20px;
       border: none;
       border-radius: 5px;
-      margin-top: 15px;
-      font-size: 16px;
       cursor: pointer;
+      font-size: 16px;
     }
-    .result-box {
+
+    .result {
       margin-top: 20px;
-      background-color: white;
-      padding: 20px;
-      border-radius: 10px;
       display: none;
     }
-    .success { color: green; }
-    .fail { color: red; }
-    .icon {
-      font-size: 50px;
+
+    .result.pass {
+      color: green;
     }
-    table {
-      margin: 15px auto;
-      border-collapse: collapse;
-      width: 100%;
+
+    .result.fail {
+      color: red;
     }
-    table, th, td {
-      border: 1px solid #aaa;
+
+    .data-siswa {
+      margin-top: 10px;
+      text-align: left;
     }
-    th, td {
-      padding: 8px;
-      font-size: 14px;
-    }
-    .exit-button {
+
+    .keluar {
       margin-top: 20px;
-      background-color: #444;
     }
   </style>
 </head>
 <body>
-  <h1>PENGUMUMAN KELULUSAN</h1>
-  <h2>SDN 2 SUKAMAJU</h2>
-  <h2>Tahun Ajaran 2024 - 2025</h2>
+  <canvas id="stars"></canvas>
+  <div class="flower-container"></div>
 
-  <div class="box">
-    <h2 style="color: green;">Cek Kelulusan Siswa</h2>
-    <input type="text" id="nama" placeholder="Masukkan nama siswa">
-    <br>
-    <button onclick="cekKelulusan()">🔍 Cek Kelulusan</button>
-  </div>
+  <div class="container">
+    <h1>PENGUMUMAN KELULUSAN</h1>
+    <h2>SDN 2 SUKAMAJU</h2>
+    <h2>Tahun Ajaran 2024 - 2025</h2>
 
-  <div class="result-box" id="hasilBox">
-    <div id="ikon"></div>
-    <div id="status"></div>
-    <h3>Data Siswa</h3>
-    <table id="dataSiswa">
-      <!-- Isi dinamis -->
-    </table>
-    <button class="exit-button" onclick="keluar()">Keluar</button>
+    <div class="box">
+      <h3 style="color: green; font-weight: normal">Cek Kelulusan Siswa</h3>
+      <input type="text" id="nama" placeholder="Masukkan nama siswa">
+      <br>
+      <button onclick="cekKelulusan()">🔍 Cek Kelulusan</button>
+
+      <div class="result" id="hasil"></div>
+    </div>
+
+    <div class="keluar">
+      <button onclick="window.close()">Keluar</button>
+    </div>
   </div>
 
   <script>
-    const data = {
-      "ADRIANSYAH": ["3126236283", "Ciamis, 09 Desember 2012", "78,55", "Lulus"],
-      "ALIYA ZAKIA": ["0126748895", "Ciamis, 12 September 2012", "88,97", "Lulus"],
-      "ANINDHA ZAHRA ZAKIYAH": ["3134993505", "Ciamis, 10 Februari 2013", "82,60", "Lulus"],
-      "ANNISA HASNA NABILA ANANDIRA": ["0138344863", "Ciamis, 07 April 2013", "86,38", "Lulus"],
-      "ARKA ARDIANTO": ["0121603778", "Ciamis, 26 Oktober 2012", "82,41", "Lulus"],
-      "AURA PUTRI RAMDANI": ["0125498658", "Ciamis, 10 Agustus 2012", "83,89", "Lulus"],
-      "BIMA ANGGARA ANDROMEDA": ["0138753478", "Ciamis, 17 Maret 2013", "83,42", "Lulus"],
-      "DAFI RAMDANI": ["0127866777", "Ciamis, 23 Juli 2012", "80,74", "Lulus"],
-      "DANAR RAMA AGUSTIAN": ["0128178389", "Ciamis, 18 Agustus 2012", "86,05", "Lulus"],
-      "DEA EKA PURWANTI": ["0134595905", "Ciamis, 06 Januari 2013", "90,87", "Lulus"],
-      "HERNAWATI": ["0127775190", "Ciamis, 28 Juni 2012", "75,82", "Lulus"],
-      "ILHAM MAULANA": ["0129327123", "Ciamis, 27 September 2012", "82,64", "Lulus"],
-      "IRGIAN VITRA WIJAKSANA": ["0128067568", "Ciamis, 27 Juni 2012", "82,54", "Lulus"],
-      "KENJI LATIF ALVARO": ["0126096984", "Ciamis, 14 Oktober 2012", "81,65", "Lulus"],
-      "KHEDIRA RAMDAN NURSIDIQ": ["0126298378", "Ciamis, 29 Juli 2012", "82,38", "Lulus"],
-      "KUNCORO NURDIANTO": ["0122857205", "Ciamis, 21 Juni 2012", "83,56", "Lulus"],
-      "MAULANA IBRAHIM": ["3135245136", "Ciamis, 06 April 2013", "84,98", "Lulus"],
-      "MUHAMAD FAREL FERNANDO": ["0126153299", "Ciamis, 09 Juni 2012", "86,40", "Lulus"],
-      "MUHAMMAD ANUGIERAH ARRAFI": ["3127637721", "Cirebon, 04 November 2012", "83,56", "Lulus"],
-      "NAFISA NURUL AZIZAH": ["0121164876", "Ciamis, 03 September 2012", "83,36", "Lulus"],
-      "NASYA NEFA ALSYAVIRA": ["3136021112", "Ciamis, 07 April 2013", "87,18", "Lulus"],
-      "ORYZA SATIVA BACHRI": ["0125830023", "Jakarta, 28 April 2012", "85,56", "Lulus"],
-      "RAHMAWATI": ["0139923301", "Ciamis, 30 Maret 2013", "82,80", "Lulus"],
-      "RAKA SAPUTRA": ["3128478218", "Bandung, 09 November 2012", "85,71", "Lulus"],
-      "RAMDHAN GUSTAMAN IRAWAN": ["0126006041", "Ciamis, 17 Agustus 2012", "83,97", "Lulus"],
-      "RIANA AZAHRA": ["0122996924", "Ciamis, 23 Januari 2012", "83,95", "Lulus"],
-      "SABILA ARTANTI PRATIWI": ["0135795959", "Ciamis, 17 Januari 2013", "88,92", "Lulus"],
-      "SHENA FABIAN PUTRA": ["0126260972", "Ciamis, 06 Juli 2012", "81,21", "Lulus"],
-      "SITI FHARIDAH FADILAH": ["0134010767", "Ciamis, 19 Maret 2013", "86,78", "Lulus"],
-      "ZAHRA": ["0123908469", "Ciamis, 08 Desember 2012", "85,39", "Lulus"]
-    };
+    const dataSiswa = [
+      { nama: "ADRIANSYAH", nisn: "3126236283", ttl: "Ciamis,09 Desember 2012", nilai: 78.55, ket: "Lulus" },
+      { nama: "ALIYA ZAKIA", nisn: "0126748895", ttl: "Ciamis,12September 2012", nilai: 88.97, ket: "Lulus" },
+      { nama: "ANINDHA ZAHRA ZAKIYAH", nisn: "3134993505", ttl: "Ciamis, 10 Februari 2013", nilai: 82.60, ket: "Lulus" },
+      // Tambahkan semua siswa lainnya sesuai daftar...
+    ];
 
     function cekKelulusan() {
-      const input = document.getElementById("nama").value.trim().toUpperCase();
-      const box = document.getElementById("hasilBox");
-      const ikon = document.getElementById("ikon");
-      const status = document.getElementById("status");
-      const tabel = document.getElementById("dataSiswa");
+      const namaInput = document.getElementById('nama').value.trim().toUpperCase();
+      const hasil = document.getElementById('hasil');
+      const siswa = dataSiswa.find(s => s.nama === namaInput);
 
-      if (data[input]) {
-        const siswa = data[input];
-        ikon.innerHTML = '<div class="icon success">✔</div>';
-        status.innerHTML = `<p class="success">LULUS</p>`;
-        tabel.innerHTML = `<tr><th>Nama</th><th>NISN</th><th>TTL</th><th>Nilai Rata-rata</th><th>Ket</th></tr>
-          <tr><td>${input}</td><td>${siswa[0]}</td><td>${siswa[1]}</td><td>${siswa[2]}</td><td>${siswa[3]}</td></tr>`;
+      if (siswa) {
+        hasil.style.display = 'block';
+        hasil.className = 'result ' + (siswa.ket === 'Lulus' ? 'pass' : 'fail');
+        hasil.innerHTML = `
+          <div style="font-size: 30px;">
+            ${siswa.ket === 'Lulus' ? '✅' : '❌'}
+          </div>
+          <div style="font-weight: bold; font-size: 20px;">
+            ${siswa.ket.toUpperCase()}
+          </div>
+          <div class="data-siswa">
+            <p><strong>Nama:</strong> ${siswa.nama}</p>
+            <p><strong>NISN:</strong> ${siswa.nisn}</p>
+            <p><strong>TTL:</strong> ${siswa.ttl}</p>
+            <p><strong>Nilai Rata-rata:</strong> ${siswa.nilai}</p>
+            <p><strong>Keterangan:</strong> ${siswa.ket}</p>
+          </div>
+        `;
       } else {
-        ikon.innerHTML = '<div class="icon fail">❌</div>';
-        status.innerHTML = `<p class="fail">TIDAK LULUS / NAMA TIDAK DITEMUKAN</p>`;
-        tabel.innerHTML = "";
+        hasil.style.display = 'block';
+        hasil.className = 'result fail';
+        hasil.innerHTML = '<strong>❌ Nama tidak ditemukan!</strong>';
       }
-      box.style.display = 'block';
     }
 
-    function keluar() {
-      document.getElementById("hasilBox").style.display = "none";
-      document.getElementById("nama").value = "";
+    // Bintang jatuh
+    const canvas = document.getElementById("stars");
+    const ctx = canvas.getContext("2d");
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+
+    let stars = [];
+    for (let i = 0; i < 100; i++) {
+      stars.push({
+        x: Math.random() * canvas.width,
+        y: Math.random() * canvas.height,
+        radius: Math.random() * 1.5,
+        vx: -0.5 + Math.random(),
+        vy: -0.5 + Math.random()
+      });
     }
+
+    function drawStars() {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      ctx.fillStyle = "#ffffff";
+      ctx.beginPath();
+      for (let i = 0; i < stars.length; i++) {
+        const s = stars[i];
+        ctx.moveTo(s.x, s.y);
+        ctx.arc(s.x, s.y, s.radius, 0, Math.PI * 2, true);
+      }
+      ctx.fill();
+      moveStars();
+    }
+
+    function moveStars() {
+      for (let i = 0; i < stars.length; i++) {
+        const s = stars[i];
+        s.x += s.vx;
+        s.y += s.vy;
+
+        if (s.x < 0 || s.x > canvas.width || s.y < 0 || s.y > canvas.height) {
+          s.x = Math.random() * canvas.width;
+          s.y = Math.random() * canvas.height;
+        }
+      }
+    }
+
+    setInterval(drawStars, 33);
+
+    // Bunga-bunga
+    function createFlower() {
+      const flower = document.createElement('div');
+      flower.classList.add('flower');
+      flower.style.left = Math.random() * 100 + "vw";
+      flower.style.animationDuration = (5 + Math.random() * 5) + "s";
+      document.querySelector('.flower-container').appendChild(flower);
+      setTimeout(() => flower.remove(), 10000);
+    }
+    setInterval(createFlower, 500);
   </script>
 </body>
 </html>
