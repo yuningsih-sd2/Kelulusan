@@ -1,39 +1,161 @@
 <!DOCTYPE html>
-<html>
+<html lang="id">
 <head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Pengumuman Kelulusan</title>
   <style>
-    body { font-family: Arial; text-align: center; margin-top: 50px; }
-    input, button { padding: 10px; font-size: 16px; }
-    .result { margin-top: 20px; font-size: 20px; font-weight: bold; }
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #e7f3e7;
+      padding: 20px;
+      text-align: center;
+    }
+    h1 {
+      color: green;
+      font-weight: bold;
+      margin-bottom: 0;
+    }
+    h2 {
+      color: green;
+      margin-top: 5px;
+    }
+    .box {
+      background-color: white;
+      padding: 20px;
+      margin-top: 30px;
+      border-radius: 10px;
+      display: inline-block;
+      width: 90%;
+      max-width: 600px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+    }
+    input[type="text"] {
+      width: 80%;
+      padding: 10px;
+      margin-top: 10px;
+      font-size: 16px;
+    }
+    button {
+      background-color: green;
+      color: white;
+      padding: 10px 20px;
+      border: none;
+      border-radius: 5px;
+      margin-top: 15px;
+      font-size: 16px;
+      cursor: pointer;
+    }
+    .result-box {
+      margin-top: 20px;
+      background-color: white;
+      padding: 20px;
+      border-radius: 10px;
+      display: none;
+    }
+    .success { color: green; }
+    .fail { color: red; }
+    .icon {
+      font-size: 50px;
+    }
+    table {
+      margin: 15px auto;
+      border-collapse: collapse;
+      width: 100%;
+    }
+    table, th, td {
+      border: 1px solid #aaa;
+    }
+    th, td {
+      padding: 8px;
+      font-size: 14px;
+    }
+    .exit-button {
+      margin-top: 20px;
+      background-color: #444;
+    }
   </style>
 </head>
 <body>
-  <h1>Pengumuman Kelulusan</h1>
-  <input type="text" id="nama" placeholder="Masukkan Nama Anda">
-  <button onclick="cekKelulusan()">Cek</button>
-  <div class="result" id="hasil"></div>
+  <h1>PENGUMUMAN KELULUSAN</h1>
+  <h2>SDN 2 SUKAMAJU</h2>
+  <h2>Tahun Ajaran 2024 - 2025</h2>
+
+  <div class="box">
+    <h2 style="color: green;">Cek Kelulusan Siswa</h2>
+    <input type="text" id="nama" placeholder="Masukkan nama siswa">
+    <br>
+    <button onclick="cekKelulusan()">🔍 Cek Kelulusan</button>
+  </div>
+
+  <div class="result-box" id="hasilBox">
+    <div id="ikon"></div>
+    <div id="status"></div>
+    <h3>Data Siswa</h3>
+    <table id="dataSiswa">
+      <!-- Isi dinamis -->
+    </table>
+    <button class="exit-button" onclick="keluar()">Keluar</button>
+  </div>
 
   <script>
     const data = {
-      "Ahmad": "Lulus",
-      "Budi": "Tidak Lulus",
-      "Citra": "Lulus",
-      "Dina": "Lulus",
-      "Eka": "Tidak Lulus"
-      // Tambahkan nama lain hingga 30
+      "ADRIANSYAH": ["3126236283", "Ciamis, 09 Desember 2012", "78,55", "Lulus"],
+      "ALIYA ZAKIA": ["0126748895", "Ciamis, 12 September 2012", "88,97", "Lulus"],
+      "ANINDHA ZAHRA ZAKIYAH": ["3134993505", "Ciamis, 10 Februari 2013", "82,60", "Lulus"],
+      "ANNISA HASNA NABILA ANANDIRA": ["0138344863", "Ciamis, 07 April 2013", "86,38", "Lulus"],
+      "ARKA ARDIANTO": ["0121603778", "Ciamis, 26 Oktober 2012", "82,41", "Lulus"],
+      "AURA PUTRI RAMDANI": ["0125498658", "Ciamis, 10 Agustus 2012", "83,89", "Lulus"],
+      "BIMA ANGGARA ANDROMEDA": ["0138753478", "Ciamis, 17 Maret 2013", "83,42", "Lulus"],
+      "DAFI RAMDANI": ["0127866777", "Ciamis, 23 Juli 2012", "80,74", "Lulus"],
+      "DANAR RAMA AGUSTIAN": ["0128178389", "Ciamis, 18 Agustus 2012", "86,05", "Lulus"],
+      "DEA EKA PURWANTI": ["0134595905", "Ciamis, 06 Januari 2013", "90,87", "Lulus"],
+      "HERNAWATI": ["0127775190", "Ciamis, 28 Juni 2012", "75,82", "Lulus"],
+      "ILHAM MAULANA": ["0129327123", "Ciamis, 27 September 2012", "82,64", "Lulus"],
+      "IRGIAN VITRA WIJAKSANA": ["0128067568", "Ciamis, 27 Juni 2012", "82,54", "Lulus"],
+      "KENJI LATIF ALVARO": ["0126096984", "Ciamis, 14 Oktober 2012", "81,65", "Lulus"],
+      "KHEDIRA RAMDAN NURSIDIQ": ["0126298378", "Ciamis, 29 Juli 2012", "82,38", "Lulus"],
+      "KUNCORO NURDIANTO": ["0122857205", "Ciamis, 21 Juni 2012", "83,56", "Lulus"],
+      "MAULANA IBRAHIM": ["3135245136", "Ciamis, 06 April 2013", "84,98", "Lulus"],
+      "MUHAMAD FAREL FERNANDO": ["0126153299", "Ciamis, 09 Juni 2012", "86,40", "Lulus"],
+      "MUHAMMAD ANUGIERAH ARRAFI": ["3127637721", "Cirebon, 04 November 2012", "83,56", "Lulus"],
+      "NAFISA NURUL AZIZAH": ["0121164876", "Ciamis, 03 September 2012", "83,36", "Lulus"],
+      "NASYA NEFA ALSYAVIRA": ["3136021112", "Ciamis, 07 April 2013", "87,18", "Lulus"],
+      "ORYZA SATIVA BACHRI": ["0125830023", "Jakarta, 28 April 2012", "85,56", "Lulus"],
+      "RAHMAWATI": ["0139923301", "Ciamis, 30 Maret 2013", "82,80", "Lulus"],
+      "RAKA SAPUTRA": ["3128478218", "Bandung, 09 November 2012", "85,71", "Lulus"],
+      "RAMDHAN GUSTAMAN IRAWAN": ["0126006041", "Ciamis, 17 Agustus 2012", "83,97", "Lulus"],
+      "RIANA AZAHRA": ["0122996924", "Ciamis, 23 Januari 2012", "83,95", "Lulus"],
+      "SABILA ARTANTI PRATIWI": ["0135795959", "Ciamis, 17 Januari 2013", "88,92", "Lulus"],
+      "SHENA FABIAN PUTRA": ["0126260972", "Ciamis, 06 Juli 2012", "81,21", "Lulus"],
+      "SITI FHARIDAH FADILAH": ["0134010767", "Ciamis, 19 Maret 2013", "86,78", "Lulus"],
+      "ZAHRA": ["0123908469", "Ciamis, 08 Desember 2012", "85,39", "Lulus"]
     };
 
     function cekKelulusan() {
-      const nama = document.getElementById("nama").value.trim();
-      const hasil = document.getElementById("hasil");
-      if (data[nama]) {
-        hasil.textContent = `Status: ${data[nama]}`;
-        hasil.style.color = data[nama] === "Lulus" ? "green" : "red";
+      const input = document.getElementById("nama").value.trim().toUpperCase();
+      const box = document.getElementById("hasilBox");
+      const ikon = document.getElementById("ikon");
+      const status = document.getElementById("status");
+      const tabel = document.getElementById("dataSiswa");
+
+      if (data[input]) {
+        const siswa = data[input];
+        ikon.innerHTML = '<div class="icon success">✔</div>';
+        status.innerHTML = `<p class="success">LULUS</p>`;
+        tabel.innerHTML = `<tr><th>Nama</th><th>NISN</th><th>TTL</th><th>Nilai Rata-rata</th><th>Ket</th></tr>
+          <tr><td>${input}</td><td>${siswa[0]}</td><td>${siswa[1]}</td><td>${siswa[2]}</td><td>${siswa[3]}</td></tr>`;
       } else {
-        hasil.textContent = "Nama tidak ditemukan.";
-        hasil.style.color = "gray";
+        ikon.innerHTML = '<div class="icon fail">❌</div>';
+        status.innerHTML = `<p class="fail">TIDAK LULUS / NAMA TIDAK DITEMUKAN</p>`;
+        tabel.innerHTML = "";
       }
+      box.style.display = 'block';
+    }
+
+    function keluar() {
+      document.getElementById("hasilBox").style.display = "none";
+      document.getElementById("nama").value = "";
     }
   </script>
 </body>
