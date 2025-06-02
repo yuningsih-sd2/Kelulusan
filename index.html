@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Pengumuman Kelulusan</title>
+  <style>
+    body { font-family: Arial; text-align: center; margin-top: 50px; }
+    input, button { padding: 10px; font-size: 16px; }
+    .result { margin-top: 20px; font-size: 20px; font-weight: bold; }
+  </style>
+</head>
+<body>
+  <h1>Pengumuman Kelulusan</h1>
+  <input type="text" id="nama" placeholder="Masukkan Nama Anda">
+  <button onclick="cekKelulusan()">Cek</button>
+  <div class="result" id="hasil"></div>
+
+  <script>
+    const data = {
+      "Ahmad": "Lulus",
+      "Budi": "Tidak Lulus",
+      "Citra": "Lulus",
+      "Dina": "Lulus",
+      "Eka": "Tidak Lulus"
+      // Tambahkan nama lain hingga 30
+    };
+
+    function cekKelulusan() {
+      const nama = document.getElementById("nama").value.trim();
+      const hasil = document.getElementById("hasil");
+      if (data[nama]) {
+        hasil.textContent = `Status: ${data[nama]}`;
+        hasil.style.color = data[nama] === "Lulus" ? "green" : "red";
+      } else {
+        hasil.textContent = "Nama tidak ditemukan.";
+        hasil.style.color = "gray";
+      }
+    }
+  </script>
+</body>
+</html>
